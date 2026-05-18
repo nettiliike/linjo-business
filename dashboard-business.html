@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linjo Business - Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #ffffff;
+      --muted: #64748b;
+      --dark: #111827;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --orange: #f59e0b;
+      --soft: #f8fafc;
+      --line: #e2e8f0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 28px;
+      color: var(--dark);
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      margin: 0 0 6px;
+      font-size: 40px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 26px;
+    }
+
+    .muted {
+      color: #cbd5e1;
+      margin-bottom: 28px;
+      font-size: 18px;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 26px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .box {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    label {
+      font-weight: 800;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-family: Arial, sans-serif;
+      background: white;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .big-textarea {
+      min-height: 160px;
+    }
+
+    .active-row {
+      margin: 12px 0 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .active-option {
+      background: #eef2ff;
+      border-radius: 999px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .buttons {
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, .call-link {
+      border: none;
+      padding: 13px 20px;
+      border-radius: 999px;
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .blue { background: var(--blue); }
+    .green { background: var(--green); }
+    .red { background: var(--red); }
+    .orange { background: var(--orange); }
+    .dark { background: var(--bg); }
+
+    .save-status {
+      color: #475569;
+      font-weight: 800;
+    }
+
+    .card {
+      background: #dcfce7;
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      position: relative;
+    }
+
+    .high-risk { background: #fee2e2; }
+    .mid-risk { background: #fef3c7; }
+    .low-risk { background: #dcfce7; }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      font-size: 30px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .risk {
+      background: var(--green);
+      color: white;
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .risk.high { background: var(--red); }
+    .risk.mid { background: var(--orange); }
+
+    .line {
+      font-size: 18px;
+      margin: 16px 0;
+      line-height: 1.45;
+    }
+
+    .line strong {
+      font-weight: 800;
+    }
+
+    .empty {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      font-size: 18px;
+    }
+
+    @media (max-width: 850px) {
+      body { padding: 16px; }
+      h1 { font-size: 30px; }
+      .grid { grid-template-columns: 1fr; }
+      .top { flex-direction: column; }
+      .card, .panel { padding: 20px; }
+      .title { font-size: 24px; }
+      .line { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Linjo Business</h1>
+    <div class="muted">AI-puhelinassistentti yritykselle</div>
+
+    <div class="panel">
+      <h2>Yrityksen asetukset</h2>
+
+      <div class="grid">
+        <div class="box">
+          <label>Yrityksen nimi</label>
+          <input id="companyName" placeholder="Esim. Parturi-Kampaamo Malli Oy">
+
+          <label>Verkkosivun osoite</label>
+          <input id="websiteUrl" placeholder="https://www.yritys.fi">
+
+          <label>Vastaustyyli</label>
+          <input id="tone" placeholder="selkeä, ystävällinen ja ammattimainen">
+
+          <label>Avauslause</label>
+          <textarea id="opening"></textarea>
+
+          <label>Lopetuslause</label>
+          <textarea id="closing"></textarea>
+        </div>
+
+        <div class="box">
+          <label>Aukioloajat</label>
+          <textarea id="openingHours"></textarea>
+
+          <label>Osoite</label>
+          <textarea id="address"></textarea>
+
+          <label>Ajanvarausohjeet</label>
+          <textarea id="bookingInstructions"></textarea>
+
+          <label>Jos AI ei tiedä vastausta</label>
+          <textarea id="fallbackInstruction"></textarea>
+        </div>
+      </div>
+
+      <div class="grid-1" style="margin-top:18px;">
+        <div class="box">
+          <label>Palvelut</label>
+          <textarea id="services" class="big-textarea"></textarea>
+
+          <label>Hinnat / hintatiedot</label>
+          <textarea id="prices" class="big-textarea"></textarea>
+
+          <label>Usein kysytyt kysymykset</label>
+          <textarea id="faq" class="big-textarea"></textarea>
+
+          <label>Verkkosivulta haettu tietopankki</label>
+          <textarea id="websiteKnowledge" class="big-textarea" placeholder="Voit hakea tiedot verkkosivulta painikkeella tai kirjoittaa käsin."></textarea>
+
+          <div class="buttons">
+            <button class="blue" onclick="scrapeWebsite()">Hae tiedot verkkosivulta</button>
+            <button class="dark" onclick="saveSettings()">Tallenna yrityksen asetukset</button>
+            <span id="settingsStatus" class="save-status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Assistentin vastaustavat</h2>
+      <p>Valitse aktiivinen avausviesti ja muokkaa kolmea eri tilannetta.</p>
+
+      <div class="active-row">
+        <label class="active-option">
+          <input type="radio" name="activeReply" value="reply1">
+          <span id="reply1RadioName">Vastaus 1</span>
+        </label>
+        <label class="active-option">
+          <input type="radio" name="activeReply" value="reply2">
+          <span id="reply2RadioName">Vastaus 2</span>
+        </label>
+        <label class="active-option">
+          <input type="radio" name="activeReply" value="reply3">
+          <span id="reply3RadioName">Vastaus 3</span>
+        </label>
+      </div>
+
+      <div class="grid">
+        <div class="box">
+          <label>Vastaustavan nimi 1</label>
+          <input id="reply1Name">
+          <label>Vastausviesti 1</label>
+          <textarea id="reply1Message"></textarea>
+        </div>
+
+        <div class="box">
+          <label>Vastaustavan nimi 2</label>
+          <input id="reply2Name">
+          <label>Vastausviesti 2</label>
+          <textarea id="reply2Message"></textarea>
+        </div>
+
+        <div class="box">
+          <label>Vastaustavan nimi 3</label>
+          <input id="reply3Name">
+          <label>Vastausviesti 3</label>
+          <textarea id="reply3Message"></textarea>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button class="dark" onclick="saveSettings()">Tallenna vastaustavat</button>
+      </div>
+    </div>
+
+    <div id="calls">Ladataan...</div>
+  </div>
+
+  <script>
+    const el = document.getElementById("calls");
+    const settingsStatus = document.getElementById("settingsStatus");
+
+    const defaultSettings = {
+      activeReply: "reply1",
+      company: {
+        name: "",
+        websiteUrl: "",
+        tone: "selkeä, ystävällinen ja ammattimainen",
+        opening: "Hei, olet yhteydessä yrityksen tekoälyavustajaan. Miten voin auttaa?",
+        closing: "Kiitos soitosta. Välitän asian tarvittaessa eteenpäin. Hei hei.",
+        fallbackInstruction: "Jos et tiedä vastausta varmasti, älä keksi. Pyydä soittajaa jättämään nimi ja asia."
+      },
+      businessInfo: {
+        openingHours: "",
+        address: "",
+        services: "",
+        prices: "",
+        bookingInstructions: "",
+        faq: "",
+        websiteKnowledge: ""
+      },
+      replies: {
+        reply1: { name: "Yleinen asiakaspalvelu", message: "Hei, olet yhteydessä yrityksen tekoälyavustajaan. Kerro lyhyesti, miten voin auttaa." },
+        reply2: { name: "Kiireinen hetki", message: "Hei, yrityksessä on juuri kiireinen hetki. Kerro lyhyesti nimesi ja asiasi, niin välitän viestin eteenpäin." },
+        reply3: { name: "Suljettu", message: "Hei, yritys on tällä hetkellä suljettu. Kerro nimesi ja asiasi, niin välitän viestin eteenpäin." }
+      }
+    };
+
+    function esc(v) {
+      return String(v ?? "").replace(/[&<>'"]/g, c => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;"
+      }[c]));
+    }
+
+    function setValue(id, value) {
+      const item = document.getElementById(id);
+      if (item) item.value = value || "";
+    }
+
+    function getValue(id) {
+      return document.getElementById(id)?.value || "";
+    }
+
+    function setText(id, value) {
+      const item = document.getElementById(id);
+      if (item) item.textContent = value || "";
+    }
+
+    function updateRadioNames() {
+      setText("reply1RadioName", getValue("reply1Name") || "Vastaus 1");
+      setText("reply2RadioName", getValue("reply2Name") || "Vastaus 2");
+      setText("reply3RadioName", getValue("reply3Name") || "Vastaus 3");
+    }
+
+    function getActiveReply() {
+      return document.querySelector('input[name="activeReply"]:checked')?.value || "reply1";
+    }
+
+    function mergeSettings(data) {
+      return {
+        ...defaultSettings,
+        ...data,
+        company: { ...defaultSettings.company, ...(data.company || {}) },
+        businessInfo: { ...defaultSettings.businessInfo, ...(data.businessInfo || {}) },
+        replies: { ...defaultSettings.replies, ...(data.replies || {}) }
+      };
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        const data = res.ok ? await res.json() : {};
+        const s = mergeSettings(data);
+
+        setValue("companyName", s.company.name);
+        setValue("websiteUrl", s.company.websiteUrl);
+        setValue("tone", s.company.tone);
+        setValue("opening", s.company.opening);
+        setValue("closing", s.company.closing);
+        setValue("fallbackInstruction", s.company.fallbackInstruction);
+
+        setValue("openingHours", s.businessInfo.openingHours);
+        setValue("address", s.businessInfo.address);
+        setValue("services", s.businessInfo.services);
+        setValue("prices", s.businessInfo.prices);
+        setValue("bookingInstructions", s.businessInfo.bookingInstructions);
+        setValue("faq", s.businessInfo.faq);
+        setValue("websiteKnowledge", s.businessInfo.websiteKnowledge);
+
+        setValue("reply1Name", s.replies.reply1.name);
+        setValue("reply1Message", s.replies.reply1.message);
+        setValue("reply2Name", s.replies.reply2.name);
+        setValue("reply2Message", s.replies.reply2.message);
+        setValue("reply3Name", s.replies.reply3.name);
+        setValue("reply3Message", s.replies.reply3.message);
+
+        const radio = document.querySelector(`input[name="activeReply"][value="${s.activeReply || "reply1"}"]`);
+        if (radio) radio.checked = true;
+
+        updateRadioNames();
+      } catch (err) {
+        console.error(err);
+        settingsStatus.textContent = "Asetusten lataus epäonnistui.";
+      }
+    }
+
+    function buildPayload() {
+      return {
+        activeReply: getActiveReply(),
+        company: {
+          name: getValue("companyName"),
+          websiteUrl: getValue("websiteUrl"),
+          tone: getValue("tone"),
+          opening: getValue("opening"),
+          closing: getValue("closing"),
+          fallbackInstruction: getValue("fallbackInstruction")
+        },
+        businessInfo: {
+          openingHours: getValue("openingHours"),
+          address: getValue("address"),
+          services: getValue("services"),
+          prices: getValue("prices"),
+          bookingInstructions: getValue("bookingInstructions"),
+          faq: getValue("faq"),
+          websiteKnowledge: getValue("websiteKnowledge")
+        },
+        replies: {
+          reply1: { name: getValue("reply1Name"), message: getValue("reply1Message") },
+          reply2: { name: getValue("reply2Name"), message: getValue("reply2Message") },
+          reply3: { name: getValue("reply3Name"), message: getValue("reply3Message") }
+        }
+      };
+    }
+
+    async function saveSettings() {
+      try {
+        updateRadioNames();
+        settingsStatus.textContent = "Tallennetaan...";
+
+        const res = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(buildPayload())
+        });
+
+        if (!res.ok) throw new Error("Tallennus epäonnistui");
+
+        settingsStatus.textContent = "Tallennettu ✅";
+      } catch (err) {
+        console.error(err);
+        settingsStatus.textContent = "Tallennus epäonnistui.";
+      }
+    }
+
+    async function scrapeWebsite() {
+      try {
+        settingsStatus.textContent = "Haetaan tietoja verkkosivulta...";
+
+        const res = await fetch("/api/scrape-website", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ websiteUrl: getValue("websiteUrl") })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.details || "Haku epäonnistui");
+
+        setValue("websiteKnowledge", data.websiteKnowledge || "");
+        settingsStatus.textContent = "Verkkosivun tiedot haettu ✅";
+      } catch (err) {
+        console.error(err);
+        settingsStatus.textContent = "Verkkosivun tietojen haku epäonnistui.";
+      }
+    }
+
+    function getRisk(d) {
+      return Number(d.spamRisk ?? d.riskScore ?? d.risk ?? 0);
+    }
+
+    function riskClass(risk) {
+      if (risk >= 70) return "high-risk";
+      if (risk >= 35) return "mid-risk";
+      return "low-risk";
+    }
+
+    function riskBadgeClass(risk) {
+      if (risk >= 70) return "high";
+      if (risk >= 35) return "mid";
+      return "";
+    }
+
+    function formatDate(createdAt) {
+      if (createdAt?._seconds) return new Date(createdAt._seconds * 1000).toLocaleString("fi-FI");
+      if (createdAt?.seconds) return new Date(createdAt.seconds * 1000).toLocaleString("fi-FI");
+      if (typeof createdAt === "string") return new Date(createdAt).toLocaleString("fi-FI");
+      return "";
+    }
+
+    function fullPhone(d) {
+      return d.from || d.phone || d.callerNumber || d.number || d.fromMasked || "Tuntematon";
+    }
+
+    async function loadCalls() {
+      try {
+        const res = await fetch("/api/calls");
+        const calls = await res.json();
+
+        if (!Array.isArray(calls) || calls.length === 0) {
+          el.innerHTML = '<div class="empty">Ei puheluita vielä.</div>';
+          return;
+        }
+
+        el.innerHTML = calls.map(d => {
+          const risk = getRisk(d);
+          const phone = fullPhone(d);
+          const telLink = phone && phone !== "Tuntematon"
+            ? `tel:${String(phone).replace(/\s/g, "")}`
+            : "#";
+
+          return `
+            <div class="card ${riskClass(risk)}">
+              <div class="top">
+                <h2 class="title">${esc(d.category || d.label || "Epäselvä")}</h2>
+                <div class="risk ${riskBadgeClass(risk)}">Riski ${esc(risk)}/100</div>
+              </div>
+              <div class="line"><strong>Status:</strong> ${esc(d.status || "new")}</div>
+              <div class="line"><strong>Aika:</strong> ${esc(formatDate(d.createdAt))}</div>
+              <div class="line"><strong>Soittaja:</strong> ${esc(phone)}</div>
+              <div class="line"><strong>Yritys:</strong> ${esc(d.companyName || "-")}</div>
+              <div class="line"><strong>Kiireellisyys:</strong> ${esc(d.priority || d.urgency || "keskitaso")}</div>
+              <div class="line"><strong>Suositus:</strong> ${esc(d.recommendedAction || d.action || "tarkista")}</div>
+              <div class="line"><strong>Yhteenveto:</strong> ${esc(d.summary || d.aiSummary || "Ei yhteenvetoa")}</div>
+              <div class="line"><strong>Riskin syy:</strong> ${esc(d.riskReason || d.reason || "Ei riskiselitettä")}</div>
+              <div class="line"><strong>AI:n vastaus:</strong> ${esc(d.assistantAnswer || "-")}</div>
+              <div class="line"><strong>Puheen sisältö:</strong> ${esc(d.transcript || d.message || d.speechText || d.userSpeech || "Ei puhesisältöä")}</div>
+              <div class="buttons">
+                <a class="call-link blue" href="${esc(telLink)}">Soita takaisin</a>
+                <button class="green">Merkitse hoidetuksi</button>
+                <button class="red">Estä jatkossa</button>
+                <button class="orange">Tallenna luotetuksi</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      } catch (err) {
+        console.error(err);
+        el.innerHTML = '<div class="empty">Puheluiden lataus epäonnistui.</div>';
+      }
+    }
+
+    document.addEventListener("input", updateRadioNames);
+
+    loadSettings();
+    loadCalls();
+  </script>
+</body>
+</html>
