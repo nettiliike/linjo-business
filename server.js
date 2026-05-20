@@ -453,7 +453,25 @@ app.post("/process-speech", async (req, res) => {
     res.type("text/xml").send(twiml.toString());
   }
 });
+app.post("/api/calls/:id/status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
+    await db.collection(COLLECTION).doc(id).set(
+      {
+        status: status || "handled",
+        handledAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Call status update failed:", error);
+    res.status(500).json({ error: "Puhelun tilan päivitys epäonnistui" });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Linjo Business server running on port ${PORT}`);
 });
